@@ -3,8 +3,8 @@ import random
 import time
 
 # ← Paste your plain_key from Step 5 here
-API_KEY = "iotk_479d684ff3b41ac4111948dd414d25e9b2fc3bd1f20c7f50"
-BASE_URL = "http://localhost:8000"
+API_KEY = "iotk_dbd4f3308a1dc30af0219bc7505c1bc22ad525a2d7c228ea"
+BASE_URL = "https://iot-platform-xbdj.onrender.com"
 
 DEVICE_ID = "esp32-bedroom-01"
 
