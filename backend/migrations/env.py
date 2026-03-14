@@ -1,11 +1,9 @@
-import asyncio
 from logging.config import fileConfig
-from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy import create_engine
 from alembic import context
 from app.database import Base
 from app.config import settings
 
-# Import all models so Alembic can detect them
 import app.models  # noqa: F401
 
 config = context.config
@@ -25,20 +23,26 @@ def run_migrations_offline():
         context.run_migrations()
 
 
-def do_run_migrations(connection):
-    context.configure(connection=connection, target_metadata=target_metadata)
-    with context.begin_transaction():
-        context.run_migrations()
+def run_migrations_online():
+    # Convert asyncpg URL to psycopg2 for migrations
+    sync_url = settings.database_url.replace(
+        "postgresql+asyncpg://", "postgresql+psycopg2://"
+    )
+    # Add SSL for Neon
+    if "neon.tech" in sync_url:
+        sync_url += "?sslmode=require"
 
+    sync_engine = create_engine(sync_url)
 
-async def run_migrations_online():
-    connectable = create_async_engine(settings.database_url)
-    async with connectable.connect() as connection:
-        await connection.run_sync(do_run_migrations)
-    await connectable.dispose()
+    with sync_engine.connect() as connection:
+        context.configure(connection=connection, target_metadata=target_metadata)
+        with context.begin_transaction():
+            context.run_migrations()
+
+    sync_engine.dispose()
 
 
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    asyncio.run(run_migrations_online())
+    run_migrations_online()
