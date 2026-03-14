@@ -48,6 +48,14 @@ DEVICES = [
         ],
     },
     {
+        "name": "head-office",
+        "api_key": "iotk_46660ce139093db0e1189aa9d32c2529a6ce251b121dcdc1",
+        "metrics": [
+            {"name": "temperature", "min": 20, "max": 28, "unit": "celsius"},
+            {"name": "co2", "min": 400, "max": 1200, "unit": "ppm"},
+        ],
+    },
+    {
         "name": "server-rack",
         "api_key": "iotk_9ce00b657dedeb14e7da56971a1202f481f47f21ee3ed928",
         "metrics": [

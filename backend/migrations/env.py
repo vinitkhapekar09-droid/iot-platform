@@ -1,5 +1,7 @@
+import asyncio
+import ssl
 from logging.config import fileConfig
-from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import create_async_engine
 from alembic import context
 from app.database import Base
 from app.config import settings
@@ -23,26 +25,30 @@ def run_migrations_offline():
         context.run_migrations()
 
 
-def run_migrations_online():
-    # Convert asyncpg URL to psycopg2 for migrations
-    sync_url = settings.database_url.replace(
-        "postgresql+asyncpg://", "postgresql+psycopg2://"
+def do_run_migrations(connection):
+    context.configure(connection=connection, target_metadata=target_metadata)
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+async def run_migrations_online():
+    connect_args = {}
+    if "neon.tech" in settings.database_url:
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        connect_args = {"ssl": ssl_context}
+
+    connectable = create_async_engine(
+        settings.database_url,
+        connect_args=connect_args,
     )
-    # Add SSL for Neon
-    if "neon.tech" in sync_url:
-        sync_url += "?sslmode=require"
-
-    sync_engine = create_engine(sync_url)
-
-    with sync_engine.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
-        with context.begin_transaction():
-            context.run_migrations()
-
-    sync_engine.dispose()
+    async with connectable.connect() as connection:
+        await connection.run_sync(do_run_migrations)
+    await connectable.dispose()
 
 
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    run_migrations_online()
+    asyncio.run(run_migrations_online())
