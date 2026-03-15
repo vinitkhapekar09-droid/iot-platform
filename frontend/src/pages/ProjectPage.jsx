@@ -5,6 +5,8 @@ import LiveReadings from '../components/LiveReadings'
 import SensorChart from '../components/SensorChart'
 import ApiKeyManager from '../components/ApiKeyManager'
 import ChatPanel from '../components/ChatPanel'
+import DeviceGrid from '../components/DeviceGrid'
+
 
 const METRICS = ['temperature', 'humidity', 'pressure']
 
@@ -44,14 +46,10 @@ export default function ProjectPage() {
           </div>
         </div>
 
-        <LiveReadings projectId={id} />
+        <h3 style={styles.sectionTitle}>📡 Connected Devices</h3>
+        <DeviceGrid projectId={id} />
 
-        <h3 style={styles.sectionTitle}>📈 Historical Charts</h3>
-        <div style={styles.chartsGrid}>
-          {METRICS.map((metric) => (
-            <SensorChart key={metric} projectId={id} metricName={metric} />
-          ))}
-        </div>
+        
         {/* AI Chatbot */}
         <h3 style={styles.sectionTitle}>🤖 AI Assistant</h3>
         <ChatPanel projectId={id} />

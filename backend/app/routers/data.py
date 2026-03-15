@@ -9,6 +9,7 @@ from app.schemas.sensor import SensorReadingOut
 from app.utils.dependencies import get_current_user
 from fastapi import HTTPException, status
 from typing import Optional
+from sqlalchemy import func
 
 router = APIRouter(prefix="/data", tags=["Sensor Data"])
 
@@ -71,3 +72,60 @@ async def get_latest(
     )
     result = await db.execute(query)
     return result.scalars().all()
+
+
+@router.get("/{project_id}/devices")
+async def get_devices(
+    project_id: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get all devices with their latest reading per metric."""
+    await verify_project_owner(project_id, current_user, db)
+
+    # Get latest reading per device+metric combo
+    subquery = (
+        select(
+            SensorReading.device_id,
+            SensorReading.metric_name,
+            func.max(SensorReading.timestamp).label("latest_time"),
+        )
+        .where(SensorReading.project_id == project_id)
+        .group_by(SensorReading.device_id, SensorReading.metric_name)
+        .subquery()
+    )
+
+    result = await db.execute(
+        select(SensorReading)
+        .join(
+            subquery,
+            (SensorReading.device_id == subquery.c.device_id)
+            & (SensorReading.metric_name == subquery.c.metric_name)
+            & (SensorReading.timestamp == subquery.c.latest_time),
+        )
+        .order_by(SensorReading.device_id, SensorReading.metric_name)
+    )
+    readings = result.scalars().all()
+
+    # Group by device
+    devices = {}
+    for r in readings:
+        if r.device_id not in devices:
+            devices[r.device_id] = {
+                "device_id": r.device_id,
+                "last_seen": r.timestamp.isoformat(),
+                "metrics": [],
+            }
+        devices[r.device_id]["metrics"].append(
+            {
+                "metric_name": r.metric_name,
+                "metric_value": r.metric_value,
+                "unit": r.unit,
+                "timestamp": r.timestamp.isoformat(),
+            }
+        )
+        # Track most recent timestamp across all metrics
+        if r.timestamp.isoformat() > devices[r.device_id]["last_seen"]:
+            devices[r.device_id]["last_seen"] = r.timestamp.isoformat()
+
+    return list(devices.values())

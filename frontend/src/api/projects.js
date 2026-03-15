@@ -17,3 +17,6 @@ export const getLatestReadings = (projectId) =>
 
 export const askChatbot = (projectId, question) =>
   client.post(`/chat/${projectId}`, { question })
+
+export const getDevices = (projectId) =>
+  client.get(`/data/${projectId}/devices`)
