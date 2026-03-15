@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
 import ProjectPage from './pages/ProjectPage'
+import DevicePage from './pages/DevicePage'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()

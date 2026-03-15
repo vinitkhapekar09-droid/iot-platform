@@ -111,7 +111,6 @@ export default function DevicePage() {
 
   return (
     <div style={styles.page}>
-      {/* Navbar */}
       <div style={styles.navbar}>
         <button
           style={styles.back}
@@ -123,7 +122,6 @@ export default function DevicePage() {
       </div>
 
       <div style={styles.content}>
-        {/* Header */}
         <div style={styles.header}>
           <span style={styles.deviceIcon}>📟</span>
           <div>
