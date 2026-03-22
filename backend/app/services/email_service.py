@@ -81,7 +81,7 @@ def send_alert_email(
             resend.api_key = settings.resend_api_key
             resend.Emails.send({
                 "from": "IoT Platform <onboarding@resend.dev>",
-                "to": to_email,
+                "to": [settings.alert_email or to_email],
                 "subject": subject,
                 "html": html_body,
             })
@@ -89,6 +89,7 @@ def send_alert_email(
             return True
         except Exception as e:
             print(f"❌ Resend failed: {e}")
+
 
     # Fallback to Gmail SMTP (works locally)
     if settings.alert_email and settings.alert_email_password:

@@ -14,31 +14,27 @@ def get_connect_args():
     return {}
 
 
-def get_engine():
-    """Use NullPool for Neon (serverless), regular pool for local."""
-    if "neon.tech" in settings.database_url:
-        # NullPool: no connection reuse, perfect for serverless
-        return create_async_engine(
-            settings.database_url,
-            echo=settings.debug,
-            future=True,
-            poolclass=NullPool,
-            connect_args=get_connect_args(),
-        )
-    else:
-        # Local Docker: use connection pool
-        return create_async_engine(
-            settings.database_url,
-            echo=settings.debug,
-            future=True,
-            pool_size=5,
-            max_overflow=10,
-            pool_pre_ping=True,
-            pool_recycle=300,
-        )
+is_neon = "neon.tech" in settings.database_url
 
-
-engine = get_engine()
+if is_neon:
+    engine = create_async_engine(
+        settings.database_url,
+        echo=settings.debug,
+        future=True,
+        poolclass=NullPool,
+        connect_args=get_connect_args(),
+    )
+else:
+    engine = create_async_engine(
+        settings.database_url,
+        echo=settings.debug,
+        future=True,
+        pool_size=5,
+        max_overflow=10,
+        pool_pre_ping=True,
+        pool_recycle=300,
+        connect_args=get_connect_args(),
+    )
 
 AsyncSessionLocal = sessionmaker(
     bind=engine,
