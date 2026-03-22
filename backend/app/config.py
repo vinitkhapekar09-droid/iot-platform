@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     groq_api_key: Optional[str] = None
     alert_email: Optional[str] = None
     alert_email_password: Optional[str] = None
+    resend_api_key: Optional[str] = None 
 
     class Config:
         env_file = ".env"
