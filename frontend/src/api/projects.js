@@ -20,3 +20,34 @@ export const askChatbot = (projectId, question) =>
 
 export const getDevices = (projectId) =>
   client.get(`/data/${projectId}/devices`)
+
+export const getMLReadiness = (projectId, params) =>
+  client.get(`/data/${projectId}/ml-readiness`, { params })
+
+export const getAnomalies = (projectId, params) =>
+  client.get(`/data/${projectId}/anomalies`, { params })
+
+
+// Alert Rules
+export const getAlertRules = (projectId) =>
+  client.get(`/alerts/${projectId}/rules`)
+
+export const createAlertRule = (projectId, data) =>
+  client.post(`/alerts/${projectId}/rules`, data)
+
+export const deleteAlertRule = (projectId, ruleId) =>
+  client.delete(`/alerts/${projectId}/rules/${ruleId}`)
+
+export const toggleAlertRule = (projectId, ruleId) =>
+  client.patch(`/alerts/${projectId}/rules/${ruleId}/toggle`)
+
+// Alert History
+export const getAlertHistory = (projectId) =>
+  client.get(`/alerts/${projectId}/history`)
+
+// Anomaly
+export const getAnomalyReadiness = (projectId) =>
+  client.get(`/alerts/${projectId}/anomaly/readiness`)
+
+export const trainAnomalyModel = (projectId, deviceId, metricName) =>
+  client.post(`/alerts/${projectId}/anomaly/train/${deviceId}/${metricName}`)

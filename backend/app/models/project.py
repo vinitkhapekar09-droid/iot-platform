@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from app.models.user import User
     from app.models.api_key import APIKey
     from app.models.sensor import SensorReading
+    from app.models.alert import AlertRule, AlertHistory
 
 
 class Project(Base):
@@ -31,3 +32,7 @@ class Project(Base):
     sensor_readings: Mapped[list["SensorReading"]] = relationship(
         "SensorReading", back_populates="project", cascade="all, delete-orphan"
     )
+    alert_rules: Mapped[list["AlertRule"]] = relationship(
+    "AlertRule", back_populates="project",
+    cascade="all, delete-orphan"
+)

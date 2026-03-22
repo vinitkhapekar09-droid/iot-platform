@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     secret_key: str
     database_url: str
     groq_api_key: Optional[str] = None
+    alert_email: Optional[str] = None
+    alert_email_password: Optional[str] = None
 
     class Config:
         env_file = ".env"

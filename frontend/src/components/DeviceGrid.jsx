@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getDevices } from '../api/projects'
+import { getAnomalies, getDevices } from '../api/projects'
 
 const METRIC_ICONS = {
   temperature: '🌡️',
@@ -31,6 +31,7 @@ function isOnline(isoString) {
 
 export default function DeviceGrid({ projectId }) {
   const [devices, setDevices] = useState([])
+  const [deviceAnomalies, setDeviceAnomalies] = useState({})
   const [tick, setTick]       = useState(0)
   const navigate              = useNavigate()
 
@@ -47,8 +48,20 @@ export default function DeviceGrid({ projectId }) {
 
   const fetchDevices = async () => {
     try {
-      const res = await getDevices(projectId)
-      setDevices(res.data)
+      const [devicesRes, anomaliesRes] = await Promise.all([
+        getDevices(projectId),
+        getAnomalies(projectId, { only_flagged: true, limit: 200 }),
+      ])
+      setDevices(devicesRes.data)
+
+      const latestByDevice = {}
+      anomaliesRes.data.forEach((event) => {
+        const existing = latestByDevice[event.device_id]
+        if (!existing || new Date(event.created_at) > new Date(existing.created_at)) {
+          latestByDevice[event.device_id] = event
+        }
+      })
+      setDeviceAnomalies(latestByDevice)
     } catch (err) {
       console.error('Failed to fetch devices', err)
     }
@@ -70,6 +83,7 @@ export default function DeviceGrid({ projectId }) {
     <div style={styles.grid}>
       {devices.map((device) => {
         const online = isOnline(device.last_seen)
+        const anomaly = deviceAnomalies[device.device_id]
         return (
           <div
             key={device.device_id}
@@ -96,6 +110,15 @@ export default function DeviceGrid({ projectId }) {
                 {online ? '🟢 ONLINE' : '⚫ OFFLINE'}
               </span>
             </div>
+
+            {anomaly && (
+              <div style={styles.anomalyBanner}>
+                <span>AI anomaly on {anomaly.metric_name}</span>
+                <span style={styles.anomalyScore}>
+                  score {anomaly.anomaly_score.toFixed(3)}
+                </span>
+              </div>
+            )}
 
             {/* Metrics */}
             <div style={styles.metrics}>
@@ -186,6 +209,18 @@ const styles = {
   },
   badgeOnline: { background: '#052e16', color: '#4ade80' },
   badgeOffline: { background: '#1c1917', color: '#57534e' },
+  anomalyBanner: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: '0.75rem',
+    padding: '0.45rem 0.65rem',
+    borderRadius: '8px',
+    background: '#3f1d2e',
+    color: '#fda4af',
+    fontSize: '0.74rem',
+    fontWeight: 600,
+  },
+  anomalyScore: { color: '#fecdd3', fontWeight: 700 },
   metrics: { marginBottom: '1rem' },
   metricRow: {
     display: 'flex', alignItems: 'center',

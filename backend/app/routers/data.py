@@ -4,12 +4,18 @@ from sqlalchemy import select, desc
 from app.database import get_db
 from app.models.user import User
 from app.models.sensor import SensorReading
+from app.models.anomaly import AnomalyEvent
 from app.models.project import Project
-from app.schemas.sensor import SensorReadingOut
+from app.schemas.sensor import (
+    AnomalyEventOut,
+    DataReadinessSummaryOut,
+    SensorReadingOut,
+)
 from app.utils.dependencies import get_current_user
 from fastapi import HTTPException, status
 from typing import Optional
 from sqlalchemy import func
+from app.services.anomaly_service import get_data_readiness
 
 router = APIRouter(prefix="/data", tags=["Sensor Data"])
 
@@ -129,3 +135,45 @@ async def get_devices(
             devices[r.device_id]["last_seen"] = r.timestamp.isoformat()
 
     return list(devices.values())
+
+
+@router.get("/{project_id}/ml-readiness", response_model=DataReadinessSummaryOut)
+async def get_ml_readiness(
+    project_id: str,
+    min_samples: int = Query(500, ge=50, le=100000),
+    min_span_hours: int = Query(24, ge=1, le=720),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    await verify_project_owner(project_id, current_user, db)
+    return await get_data_readiness(
+        project_id=project_id,
+        min_samples=min_samples,
+        min_span_hours=min_span_hours,
+        db=db,
+    )
+
+
+@router.get("/{project_id}/anomalies", response_model=list[AnomalyEventOut])
+async def get_anomalies(
+    project_id: str,
+    device_id: Optional[str] = Query(None),
+    metric_name: Optional[str] = Query(None),
+    only_flagged: bool = Query(True),
+    limit: int = Query(50, ge=1, le=500),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    await verify_project_owner(project_id, current_user, db)
+
+    query = select(AnomalyEvent).where(AnomalyEvent.project_id == project_id)
+    if device_id:
+        query = query.where(AnomalyEvent.device_id == device_id)
+    if metric_name:
+        query = query.where(AnomalyEvent.metric_name == metric_name)
+    if only_flagged:
+        query = query.where(AnomalyEvent.is_anomaly == True)
+
+    query = query.order_by(desc(AnomalyEvent.created_at)).limit(limit)
+    result = await db.execute(query)
+    return result.scalars().all()

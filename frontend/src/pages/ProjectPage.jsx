@@ -6,6 +6,7 @@ import SensorChart from '../components/SensorChart'
 import ApiKeyManager from '../components/ApiKeyManager'
 import ChatPanel from '../components/ChatPanel'
 import DeviceGrid from '../components/DeviceGrid'
+import AlertPanel from '../components/AlertPanel'
 
 
 const METRICS = ['temperature', 'humidity', 'pressure']
@@ -48,6 +49,9 @@ export default function ProjectPage() {
 
         <h3 style={styles.sectionTitle}>📡 Connected Devices</h3>
         <DeviceGrid projectId={id} />
+
+        <h3 style={styles.sectionTitle}>🚨 Alerts</h3>
+        <AlertPanel projectId={id} />
 
         
         {/* AI Chatbot */}

@@ -1,8 +1,10 @@
 import os
+import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-from app.routers import auth, projects, ingest, data, chatbot
+from app.routers import auth, projects, ingest, data, chatbot, alerts
+from app.services.alert_service import run_offline_alert_monitor
 
 app = FastAPI(
     title=settings.app_name,
@@ -30,6 +32,26 @@ app.include_router(projects.router)
 app.include_router(ingest.router)
 app.include_router(data.router)
 app.include_router(chatbot.router)
+app.include_router(alerts.router)
+
+
+@app.on_event("startup")
+async def startup_event():
+    app.state.offline_monitor_task = asyncio.create_task(
+        run_offline_alert_monitor(interval_seconds=60)
+    )
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    task = getattr(app.state, "offline_monitor_task", None)
+    if task:
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
+
 
 
 @app.get("/")
