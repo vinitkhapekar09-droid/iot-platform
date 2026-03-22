@@ -1,0 +1,71 @@
+{
+  "streams": {
+    "c27781ea-0deb-4682-8471-361f635dcf9a:outdoor-sensor:temperature": {
+      "project_id": "c27781ea-0deb-4682-8471-361f635dcf9a",
+      "device_id": "outdoor-sensor",
+      "metric_name": "temperature",
+      "model_path": "F:\\Serious Preparation\\AI-Powerd IoT infrastructure\\iot-platform\\backend\\models\\c27781ea-0deb-4682-8471-361f635dcf9a_outdoor-sensor_temperature_v1.joblib",
+      "model_name": "isolation_forest",
+      "model_version": "v1",
+      "sample_count": 969,
+      "contamination": 0.03,
+      "trained_at": "2026-03-22T05:51:18.454456"
+    },
+    "c27781ea-0deb-4682-8471-361f635dcf9a:outdoor-sensor:humidity": {
+      "project_id": "c27781ea-0deb-4682-8471-361f635dcf9a",
+      "device_id": "outdoor-sensor",
+      "metric_name": "humidity",
+      "model_path": "F:\\Serious Preparation\\AI-Powerd IoT infrastructure\\iot-platform\\backend\\models\\c27781ea-0deb-4682-8471-361f635dcf9a_outdoor-sensor_humidity_v1.joblib",
+      "model_name": "isolation_forest",
+      "model_version": "v1",
+      "sample_count": 966,
+      "contamination": 0.03,
+      "trained_at": "2026-03-22T05:51:50.679752"
+    },
+    "c27781ea-0deb-4682-8471-361f635dcf9a:outdoor-sensor:pressure": {
+      "project_id": "c27781ea-0deb-4682-8471-361f635dcf9a",
+      "device_id": "outdoor-sensor",
+      "metric_name": "pressure",
+      "model_path": "F:\\Serious Preparation\\AI-Powerd IoT infrastructure\\iot-platform\\backend\\models\\c27781ea-0deb-4682-8471-361f635dcf9a_outdoor-sensor_pressure_v1.joblib",
+      "model_name": "isolation_forest",
+      "model_version": "v1",
+      "sample_count": 969,
+      "contamination": 0.03,
+      "trained_at": "2026-03-22T05:52:19.859798"
+    },
+    "c27781ea-0deb-4682-8471-361f635dcf9a:esp32-bedroom-01:temperature": {
+      "project_id": "c27781ea-0deb-4682-8471-361f635dcf9a",
+      "device_id": "esp32-bedroom-01",
+      "metric_name": "temperature",
+      "model_path": "F:\\Serious Preparation\\AI-Powerd IoT infrastructure\\iot-platform\\backend\\models\\c27781ea-0deb-4682-8471-361f635dcf9a_esp32-bedroom-01_temperature_v1.joblib",
+      "model_name": "isolation_forest",
+      "model_version": "v1",
+      "sample_count": 103,
+      "contamination": 0.03,
+      "trained_at": "2026-03-22T06:10:40.011954"
+    },
+    "c27781ea-0deb-4682-8471-361f635dcf9a:esp32-bedroom-01:humidity": {
+      "project_id": "c27781ea-0deb-4682-8471-361f635dcf9a",
+      "device_id": "esp32-bedroom-01",
+      "metric_name": "humidity",
+      "model_path": "F:\\Serious Preparation\\AI-Powerd IoT infrastructure\\iot-platform\\backend\\models\\c27781ea-0deb-4682-8471-361f635dcf9a_esp32-bedroom-01_humidity_v1.joblib",
+      "model_name": "isolation_forest",
+      "model_version": "v1",
+      "sample_count": 103,
+      "contamination": 0.03,
+      "trained_at": "2026-03-22T06:11:05.500812"
+    },
+    "c27781ea-0deb-4682-8471-361f635dcf9a:esp32-bedroom-01:pressure": {
+      "project_id": "c27781ea-0deb-4682-8471-361f635dcf9a",
+      "device_id": "esp32-bedroom-01",
+      "metric_name": "pressure",
+      "model_path": "F:\\Serious Preparation\\AI-Powerd IoT infrastructure\\iot-platform\\backend\\models\\c27781ea-0deb-4682-8471-361f635dcf9a_esp32-bedroom-01_pressure_v1.joblib",
+      "model_name": "isolation_forest",
+      "model_version": "v1",
+      "sample_count": 104,
+      "contamination": 0.03,
+      "trained_at": "2026-03-22T06:11:20.859445"
+    }
+  },
+  "updated_at": "2026-03-22T06:11:20.866951"
+}
