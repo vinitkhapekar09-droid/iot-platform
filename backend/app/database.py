@@ -1,10 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from sqlalchemy.pool import NullPool
 from app.config import settings
 import ssl
 
 
-# Build SSL context for Neon
 def get_connect_args():
     if "neon.tech" in settings.database_url:
         ssl_context = ssl.create_default_context()
@@ -14,16 +14,31 @@ def get_connect_args():
     return {}
 
 
-engine = create_async_engine(
-    settings.database_url,
-    echo=settings.debug,
-    future=True,
-    pool_size=2,
-    max_overflow=3,
-    pool_pre_ping=True,
-     pool_recycle=300,
-    connect_args=get_connect_args(),
-)
+def get_engine():
+    """Use NullPool for Neon (serverless), regular pool for local."""
+    if "neon.tech" in settings.database_url:
+        # NullPool: no connection reuse, perfect for serverless
+        return create_async_engine(
+            settings.database_url,
+            echo=settings.debug,
+            future=True,
+            poolclass=NullPool,
+            connect_args=get_connect_args(),
+        )
+    else:
+        # Local Docker: use connection pool
+        return create_async_engine(
+            settings.database_url,
+            echo=settings.debug,
+            future=True,
+            pool_size=5,
+            max_overflow=10,
+            pool_pre_ping=True,
+            pool_recycle=300,
+        )
+
+
+engine = get_engine()
 
 AsyncSessionLocal = sessionmaker(
     bind=engine,

@@ -38,7 +38,7 @@ app.include_router(alerts.router)
 @app.on_event("startup")
 async def startup_event():
     app.state.offline_monitor_task = asyncio.create_task(
-        run_offline_alert_monitor(interval_seconds=60)
+        run_offline_alert_monitor(interval_seconds=300)
     )
 
 
