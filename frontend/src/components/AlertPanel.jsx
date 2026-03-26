@@ -36,6 +36,7 @@ export default function AlertPanel({ projectId }) {
   const [history, setHistory] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [activeTab, setActiveTab] = useState('history')
+  const [showAllHistory, setShowAllHistory] = useState(false)
   const [form, setForm] = useState({
     device_id: '',
     metric_name: '',
@@ -234,36 +235,46 @@ export default function AlertPanel({ projectId }) {
               </p>
             </div>
           ) : (
-            history.map((h) => (
-              <div key={h.id} style={styles.historyItem}>
-                <div style={styles.historyLeft}>
-                  <span style={{
-                    ...styles.dot,
-                    background: h.email_sent ? '#4ade80' : '#ef4444',
-                  }} />
-                  <div>
-                    <div style={styles.historyDevice}>
-                      📟 {h.device_id}
+            <>
+              {history.slice(0, showAllHistory ? history.length : 5).map((h) => (
+                <div key={h.id} style={styles.historyItem}>
+                  <div style={styles.historyLeft}>
+                    <span style={{
+                      ...styles.dot,
+                      background: h.email_sent ? '#4ade80' : '#ef4444',
+                    }} />
+                    <div>
+                      <div style={styles.historyDevice}>
+                        📟 {h.device_id}
+                      </div>
+                      <div style={styles.historyMessage}>
+                        {h.message}
+                      </div>
                     </div>
-                    <div style={styles.historyMessage}>
-                      {h.message}
+                  </div>
+                  <div style={styles.historyRight}>
+                    <div style={styles.historyTime}>
+                      {timeAgo(h.sent_at)}
+                    </div>
+                    <div style={{
+                      ...styles.emailBadge,
+                      background: h.email_sent ? '#052e16' : '#1c1917',
+                      color: h.email_sent ? '#4ade80' : '#78716c',
+                    }}>
+                      {h.email_sent ? '📧 Sent' : '📧 Failed'}
                     </div>
                   </div>
                 </div>
-                <div style={styles.historyRight}>
-                  <div style={styles.historyTime}>
-                    {timeAgo(h.sent_at)}
-                  </div>
-                  <div style={{
-                    ...styles.emailBadge,
-                    background: h.email_sent ? '#052e16' : '#1c1917',
-                    color: h.email_sent ? '#4ade80' : '#78716c',
-                  }}>
-                    {h.email_sent ? '📧 Sent' : '📧 Failed'}
-                  </div>
-                </div>
-              </div>
-            ))
+              ))}
+              {history.length > 5 && (
+                <button
+                  style={styles.showMoreBtn}
+                  onClick={() => setShowAllHistory(!showAllHistory)}
+                >
+                  {showAllHistory ? 'Show less' : `Show more (${history.length - 5})`}
+                </button>
+              )}
+            </>
           )}
         </div>
       )}
@@ -489,6 +500,16 @@ const styles = {
     padding: '0.15rem 0.5rem',
     borderRadius: '4px',
     fontSize: '0.7rem',
+  },
+  showMoreBtn: {
+    marginTop: '0.75rem',
+    padding: '0.35rem 0.8rem',
+    border: '1px solid #334155',
+    borderRadius: '6px',
+    background: '#0f172a',
+    color: '#94a3b8',
+    cursor: 'pointer',
+    fontSize: '0.8rem',
   },
   ruleItem: {
     display: 'flex',

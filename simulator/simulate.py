@@ -4,8 +4,10 @@ import time
 
 import requests
 
-API_KEY = os.getenv("IOT_API_KEY", "iotk_ce8865a7e7563c83f592fe2d91da2a53fbd9cc1274773453")
-BASE_URL = os.getenv("IOT_BASE_URL", "http://localhost:8000")
+API_KEY = os.getenv(
+    "IOT_API_KEY", "iotk_ce8865a7e7563c83f592fe2d91da2a53fbd9cc1274773453"
+)
+BASE_URL = os.getenv("IOT_BASE_URL", "http://127.0.0.1:8000")
 DEVICE_ID = os.getenv("IOT_DEVICE_ID", "esp32-bedroom-01")
 
 

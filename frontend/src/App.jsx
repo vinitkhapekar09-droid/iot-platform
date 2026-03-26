@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
 import ProjectPage from './pages/ProjectPage'
 import DevicePage from './pages/DevicePage'
+import AnalyticsPage from './pages/AnalyticsPage'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -20,6 +21,9 @@ function App() {
         <Routes>
           <Route path="/projects/:id/devices/:deviceId" element={
             <ProtectedRoute><DevicePage /></ProtectedRoute>
+          } />
+          <Route path="/projects/:id/devices/:deviceId/analytics/:metric" element={
+            <ProtectedRoute><AnalyticsPage /></ProtectedRoute>
           } />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />

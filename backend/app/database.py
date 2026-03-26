@@ -1,6 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
-from sqlalchemy.pool import NullPool
 from app.config import settings
 import ssl
 
@@ -14,27 +13,16 @@ def get_connect_args():
     return {}
 
 
-is_neon = "neon.tech" in settings.database_url
-
-if is_neon:
-    engine = create_async_engine(
-        settings.database_url,
-        echo=settings.debug,
-        future=True,
-        poolclass=NullPool,
-        connect_args=get_connect_args(),
-    )
-else:
-    engine = create_async_engine(
-        settings.database_url,
-        echo=settings.debug,
-        future=True,
-        pool_size=5,
-        max_overflow=10,
-        pool_pre_ping=True,
-        pool_recycle=300,
-        connect_args=get_connect_args(),
-    )
+engine = create_async_engine(
+    settings.database_url,
+    echo=settings.debug,
+    future=True,
+    pool_size=5,
+    max_overflow=10,
+    pool_pre_ping=True,    # ← this fixes idle connection drops
+    pool_recycle=60,       # ← recycle connections every 60s
+    connect_args=get_connect_args(),
+)
 
 AsyncSessionLocal = sessionmaker(
     bind=engine,

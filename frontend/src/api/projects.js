@@ -12,6 +12,7 @@ export const deleteApiKey = (projectId, keyId) =>
 export const getSensorReadings = (projectId, params) =>
   client.get(`/data/${projectId}/readings`, { params })
 
+
 export const getLatestReadings = (projectId) =>
   client.get(`/data/${projectId}/latest`)
 
@@ -51,3 +52,25 @@ export const getAnomalyReadiness = (projectId) =>
 
 export const trainAnomalyModel = (projectId, deviceId, metricName) =>
   client.post(`/alerts/${projectId}/anomaly/train/${deviceId}/${metricName}`)
+
+export const exportCSV = (projectId, params) => {
+  const query = new URLSearchParams()
+  if (params.deviceId) query.append('device_id', params.deviceId)
+  if (params.metricName) query.append('metric_name', params.metricName)
+  if (params.startDate) query.append('start_date', params.startDate)
+  if (params.endDate) query.append('end_date', params.endDate)
+
+  return client.get(
+    `/data/${projectId}/export/csv?${query.toString()}`,
+    { responseType: 'blob' }
+  )
+}
+
+export const getStats = (projectId, deviceId, metricName, params = {}) => {
+  const query = new URLSearchParams()
+  if (params.startDate) query.append('start_date', params.startDate)
+  if (params.endDate) query.append('end_date', params.endDate)
+  return client.get(
+    `/data/${projectId}/stats/${deviceId}/${metricName}?${query.toString()}`
+  )
+}

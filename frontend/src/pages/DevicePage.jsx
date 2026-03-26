@@ -6,6 +6,7 @@ import {
   CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
 
+
 const COLORS = {
   temperature: '#f97316',
   humidity: '#38bdf8',
@@ -163,13 +164,26 @@ export default function DevicePage() {
             <h3 style={styles.sectionTitle}>📈 Sensor Charts</h3>
             <div style={styles.chartsGrid}>
               {metrics.map((metric) => (
-                <div key={metric}>
+                <div key={metric} style={styles.chartWrapper}>
+                  <div style={styles.chartHeader}>
+                    <span style={styles.chartMetricName}>{metric}</span>
+                    <button
+                      style={styles.analyticsBtn}
+                      onClick={() => navigate(
+                        `/projects/${projectId}/devices/${deviceId}/analytics/${metric}`
+                      )}
+                    >
+                      📊 Full Analytics
+                    </button>
+                  </div>
+
                   {latestAnomalyByMetric[metric] && (
                     <div style={styles.metricAlert}>
                       AI anomaly detected: score{' '}
                       {latestAnomalyByMetric[metric].anomaly_score.toFixed(3)}
                     </div>
                   )}
+
                   <DeviceChart
                     projectId={projectId}
                     deviceId={deviceId}
@@ -274,4 +288,20 @@ const styles = {
   anomalyReason: { color: '#cbd5e1' },
   anomalyScore: { color: '#fecdd3', fontWeight: 700 },
   empty: { color: '#94a3b8', textAlign: 'center', padding: '2rem' },
+
+chartWrapper: { marginBottom: '1.25rem' },
+chartHeader: {
+  display: 'flex', justifyContent: 'space-between',
+  alignItems: 'center', marginBottom: '0.5rem',
+},
+chartMetricName: {
+  color: '#f1f5f9', fontSize: '0.95rem',
+  fontWeight: '600', textTransform: 'capitalize',
+},
+analyticsBtn: {
+  padding: '0.35rem 0.75rem', background: '#0f172a',
+  border: '1px solid #334155', borderRadius: '6px',
+  color: '#94a3b8', fontSize: '0.78rem', cursor: 'pointer',
+},
+
 }

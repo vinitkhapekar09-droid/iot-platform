@@ -37,12 +37,9 @@ app.include_router(alerts.router)
 
 @app.on_event("startup")
 async def startup_event():
-    # Only run offline monitor in non-production
-    # to avoid DB connection issues on free tier
-    if settings.debug:
-        app.state.offline_monitor_task = asyncio.create_task(
-            run_offline_alert_monitor(interval_seconds=300)
-        )
+    app.state.offline_monitor_task = asyncio.create_task(
+        run_offline_alert_monitor(interval_seconds=300)
+    )
 
 
 @app.on_event("shutdown")
