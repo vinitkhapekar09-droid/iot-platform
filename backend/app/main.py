@@ -1,6 +1,6 @@
 import os
 import asyncio
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.routers import auth, projects, ingest, data, chatbot, alerts
@@ -63,6 +63,15 @@ async def root():
 
 
 @app.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "app": settings.app_name,
+    }
+
+
+@app.get("/health")
+@app.head("/health")
 async def health_check():
     return {
         "status": "healthy",
