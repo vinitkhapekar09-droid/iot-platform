@@ -18,6 +18,7 @@ class UserOut(BaseModel):
     id: str
     email: str
     full_name: Optional[str]
+    alert_email: Optional[str] = None
     is_active: bool
     created_at: datetime
 

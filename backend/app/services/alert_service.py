@@ -13,10 +13,10 @@ from app.services.email_service import (
 )
 
 
-async def get_project_owner_email(
+async def get_project_owner_and_details(
     project_id: str, db: AsyncSession
-) -> tuple[str, str]:
-    """Get project owner email and project name."""
+) -> tuple[str, str, str]:
+    """Get project owner email/alert_email and project name."""
     result = await db.execute(
         select(Project, User)
         .join(User, Project.owner_id == User.id)
@@ -24,9 +24,11 @@ async def get_project_owner_email(
     )
     row = result.first()
     if not row:
-        return None, None
+        return None, None, None
     project, user = row
-    return user.email, project.name
+    # Use alert_email if set, fallback to primary email
+    alert_email = user.alert_email or user.email
+    return alert_email, project.name, user.id
 
 
 async def is_in_cooldown(
@@ -75,11 +77,11 @@ async def check_and_trigger_alerts(
     if not rules:
         return
 
-    # Get project owner email
-    owner_email, project_name = await get_project_owner_email(
+    # Get project owner alert email
+    alert_email, project_name, owner_id = await get_project_owner_and_details(
         project_id, db
     )
-    if not owner_email:
+    if not alert_email:
         return
 
     for rule in rules:
@@ -119,7 +121,7 @@ async def check_and_trigger_alerts(
 
         # Send email
         email_sent = send_alert_email(
-            to_email=owner_email,
+            to_email=alert_email,
             device_id=device_id,
             metric_name=metric_name,
             condition=rule.condition,
@@ -161,8 +163,8 @@ async def check_and_trigger_anomaly_alerts(
     if not rules:
         return
 
-    owner_email, project_name = await get_project_owner_email(project_id, db)
-    if not owner_email:
+    alert_email, project_name, owner_id = await get_project_owner_and_details(project_id, db)
+    if not alert_email:
         return
 
     for rule in rules:
@@ -196,7 +198,7 @@ async def check_and_trigger_anomaly_alerts(
         await db.flush()
 
         email_sent = send_alert_email(
-            to_email=owner_email,
+            to_email=alert_email,
             device_id=device_id,
             metric_name=f"{metric_name} anomaly score",
             condition="gt",
@@ -252,10 +254,10 @@ async def check_and_trigger_offline_alerts(db: AsyncSession) -> None:
         if in_cooldown:
             continue
 
-        owner_email, project_name = await get_project_owner_email(
+        alert_email, project_name, owner_id = await get_project_owner_and_details(
             rule.project_id, db
         )
-        if not owner_email:
+        if not alert_email:
             continue
 
         history = AlertHistory(
@@ -274,7 +276,7 @@ async def check_and_trigger_offline_alerts(db: AsyncSession) -> None:
         await db.flush()
 
         email_sent = send_offline_alert_email(
-            to_email=owner_email,
+            to_email=alert_email,
             device_id=rule.device_id,
             project_name=project_name,
             last_seen_minutes=offline_minutes,

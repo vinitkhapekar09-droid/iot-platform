@@ -6,6 +6,7 @@ import DashboardPage from './pages/DashboardPage'
 import ProjectPage from './pages/ProjectPage'
 import DevicePage from './pages/DevicePage'
 import AnalyticsPage from './pages/AnalyticsPage'
+import SettingsPage from './pages/SettingsPage'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -32,6 +33,9 @@ function App() {
           } />
           <Route path="/projects/:id" element={
             <ProtectedRoute><ProjectPage /></ProtectedRoute>
+          } />
+          <Route path="/settings" element={
+            <ProtectedRoute><SettingsPage /></ProtectedRoute>
           } />
           <Route path="/" element={<Navigate to="/dashboard" />} />
         </Routes>
