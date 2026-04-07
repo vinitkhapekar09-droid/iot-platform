@@ -17,7 +17,10 @@ BASE_URL = os.getenv("IOT_BASE_URL", "http://localhost:8000")
 DEVICES = [
     {
         "name": "esp32-living-room",
-        "api_key": os.getenv("IOT_API_KEY_LIVING_ROOM", "FILL_IN_API_KEY"),
+        "api_key": os.getenv(
+            "IOT_API_KEY_LIVING_ROOM",
+            "iotk_5b2cfad8110aec1a783eaa21b2dff9af55fd9ffae0c52e00",
+        ),
         "metrics": [
             {"name": "temperature", "min": 20, "max": 30, "unit": "celsius"},
             {"name": "humidity", "min": 40, "max": 70, "unit": "percent"},
@@ -25,7 +28,10 @@ DEVICES = [
     },
     {
         "name": "esp32-bedroom",
-        "api_key": os.getenv("IOT_API_KEY_BEDROOM", "FILL_IN_API_KEY"),
+        "api_key": os.getenv(
+            "IOT_API_KEY_BEDROOM",
+            "iotk_5b2cfad8110aiotk_5b2cfad8110aec1a783eaa21b2dff9af55fd9ffae0c52e00ec1a783eaa21b2dff9af55f",
+        ),
         "metrics": [
             {"name": "temperature", "min": 18, "max": 26, "unit": "celsius"},
             {"name": "humidity", "min": 50, "max": 80, "unit": "percent"},
@@ -34,7 +40,10 @@ DEVICES = [
     },
     {
         "name": "outdoor-sensor",
-        "api_key": os.getenv("IOT_API_KEY_OUTDOOR", "FILL_IN_API_KEY"),
+        "api_key": os.getenv(
+            "IOT_API_KEY_OUTDOOR",
+            "iotk_ce8865a7e7563c83f592fe2d91da2a53fbd9cc1274773453",
+        ),
         "metrics": [
             {"name": "temperature", "min": 15, "max": 40, "unit": "celsius"},
             {"name": "humidity", "min": 30, "max": 90, "unit": "percent"},
@@ -43,7 +52,10 @@ DEVICES = [
     },
     {
         "name": "office-desk",
-        "api_key": os.getenv("IOT_API_KEY_OFFICE_DESK", "FILL_IN_API_KEY"),
+        "api_key": os.getenv(
+            "IOT_API_KEY_OFFICE_DESK",
+            "iotk_0dbcd20aa93846ba264784ef1ee6ea6e1d6b60d90879020f",
+        ),
         "metrics": [
             {"name": "temperature", "min": 20, "max": 28, "unit": "celsius"},
             {"name": "co2", "min": 400, "max": 1200, "unit": "ppm"},
@@ -51,7 +63,10 @@ DEVICES = [
     },
     {
         "name": "head-office",
-        "api_key": os.getenv("IOT_API_KEY_HEAD_OFFICE", "FILL_IN_API_KEY"),
+        "api_key": os.getenv(
+            "IOT_API_KEY_HEAD_OFFICE",
+            "iotk_0dbcd20aa93846ba264784ef1ee6ea6e1d6b60d90879020f",
+        ),
         "metrics": [
             {"name": "temperature", "min": 20, "max": 28, "unit": "celsius"},
             {"name": "co2", "min": 400, "max": 1200, "unit": "ppm"},
@@ -59,7 +74,10 @@ DEVICES = [
     },
     {
         "name": "server-rack",
-        "api_key": os.getenv("IOT_API_KEY_SERVER_RACK", "FILL_IN_API_KEY"),
+        "api_key": os.getenv(
+            "IOT_API_KEY_SERVER_RACK",
+            "iotk_9ce00b657dedeb14e7da56971a1202f481f47f21ee3ed928",
+        ),
         "metrics": [
             {"name": "temperature", "min": 35, "max": 55, "unit": "celsius"},
             {"name": "humidity", "min": 20, "max": 40, "unit": "percent"},

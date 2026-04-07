@@ -19,3 +19,7 @@ frontend/dist/
 # OS
 .DS_Store
 Thumbs.db
+backend/models/.joblib
+
+# Models - stored on Digital Ocean only
+models/

@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import APIRouter, Depends, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
@@ -8,6 +10,7 @@ from app.services.alert_service import (
     check_and_trigger_anomaly_alerts,
 )
 from app.services.anomaly_service import score_reading_and_record_event
+from app.services.auto_model_training_service import trigger_auto_model_training
 
 router = APIRouter(prefix="/ingest", tags=["Device Ingestion"])
 
@@ -52,5 +55,16 @@ async def ingest(
         )
     except Exception as e:
         print(f"Anomaly scoring failed: {e}")
+
+    try:
+        asyncio.create_task(
+            trigger_auto_model_training(
+                project_id=reading.project_id,
+                device_id=data.device_id,
+                metric_name=data.metric_name,
+            )
+        )
+    except Exception as e:
+        print(f"Auto model training trigger failed: {e}")
 
     return reading

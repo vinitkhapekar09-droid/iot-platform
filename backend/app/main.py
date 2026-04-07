@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.routers import auth, projects, ingest, data, chatbot, alerts
 from app.services.alert_service import run_offline_alert_monitor
+from app.services.auto_model_training_service import run_auto_model_training_loop
 
 app = FastAPI(
     title=settings.app_name,
@@ -40,11 +41,22 @@ async def startup_event():
     app.state.offline_monitor_task = asyncio.create_task(
         run_offline_alert_monitor(interval_seconds=300)
     )
+    app.state.auto_model_training_task = asyncio.create_task(
+        run_auto_model_training_loop()
+    )
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
     task = getattr(app.state, "offline_monitor_task", None)
+    if task:
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
+
+    task = getattr(app.state, "auto_model_training_task", None)
     if task:
         task.cancel()
         try:
