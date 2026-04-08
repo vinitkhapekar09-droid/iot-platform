@@ -14,15 +14,19 @@ app = FastAPI(
 )
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
+frontend_origins = [
+    origin.strip() for origin in FRONTEND_URL.split(",") if origin.strip()
+]
+
+allowed_origins = [
+    "http://localhost:5173",
+    "https://localhost:5173",
+    "https://aiot-platform.vercel.app",
+] + frontend_origins
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "https://localhost:5173",
-        "https://aiot-platform.vercel.app",
-        FRONTEND_URL,
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
