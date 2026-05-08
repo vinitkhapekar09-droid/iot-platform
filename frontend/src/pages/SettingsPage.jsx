@@ -55,7 +55,7 @@ export default function SettingsPage() {
       <div style={styles.navbar}>
         <button
           style={styles.back}
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/dashboard')}
         >
           ← Back to Dashboard
         </button>

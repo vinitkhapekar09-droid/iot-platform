@@ -1,7 +1,9 @@
 import axios from 'axios'
 
+const { protocol, hostname } = window.location
+const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1'
 const defaultApiBase =
-  window.location.hostname === 'localhost'
+  import.meta.env.DEV && isLocalhost
     ? 'http://127.0.0.1:8000'
     : window.location.origin
 
