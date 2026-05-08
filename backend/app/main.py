@@ -20,17 +20,27 @@ frontend_origins = [
 
 allowed_origins = [
     "http://localhost:5173",
+    "http://localhost:5174",
     "https://localhost:5173",
+    "https://localhost:5174",
     "https://aiot-platform.vercel.app",
 ] + frontend_origins
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+cors_options = {
+    "allow_origins": allowed_origins,
+    "allow_credentials": True,
+    "allow_methods": ["*"],
+    "allow_headers": ["*"],
+}
+
+# Keep broader local/dev origin matching out of production.
+if settings.debug:
+    cors_options["allow_origin_regex"] = (
+        r"https://.*github\.dev$|https://.*app\.github\.dev$|"
+        r"http://localhost(:\d+)?$|http://127\.0\.0\.1(:\d+)?$"
+    )
+
+app.add_middleware(CORSMiddleware, **cors_options)
 
 app.include_router(auth.router)
 app.include_router(projects.router)
