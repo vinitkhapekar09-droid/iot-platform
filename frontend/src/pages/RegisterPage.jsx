@@ -27,7 +27,13 @@ export default function RegisterPage() {
       login(res.data.access_token, res.data.user)
       navigate('/dashboard')
     } catch (err) {
-      setError(err.response?.data?.detail || 'Registration failed')
+      const detail = err.response?.data?.detail
+      const fallback = err.message || 'Registration failed'
+      if (err.code === 'ERR_NETWORK') {
+        setError('Cannot reach backend API. Check backend is running and VITE_API_URL is correct.')
+      } else {
+        setError(typeof detail === 'string' ? detail : fallback)
+      }
     } finally {
       setLoading(false)
     }
