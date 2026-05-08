@@ -120,21 +120,6 @@ export default function DashboardPage() {
         <div style={styles.navbarLeft}>
           <span style={styles.navTitle}>Dashboard</span>
         </div>
-        <div style={styles.navRight}>
-          <button 
-            style={styles.settingsBtn} 
-            onClick={() => setSettingsOpen(true)}
-            title="Settings"
-          >
-            ⚙️
-          </button>
-          <button style={styles.logoutBtn} onClick={() => {
-            logout()
-            navigate('/')
-          }}>
-            Logout
-          </button>
-        </div>
       </div>
 
       {/* Main content */}
