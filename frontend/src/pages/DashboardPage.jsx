@@ -24,7 +24,11 @@ export default function DashboardPage() {
   const fetchProjects = async () => {
     try {
       const res = await getProjects()
-      setProjects(res.data)
+      // Ensure we always store an array in state (API may return an object)
+      const data = res?.data
+      if (Array.isArray(data)) setProjects(data)
+      else if (data && Array.isArray(data.projects)) setProjects(data.projects)
+      else setProjects([])
     } catch {
       setError('Failed to load projects')
     } finally {
@@ -76,11 +80,47 @@ export default function DashboardPage() {
 
   return (
     <div style={styles.page}>
+      {/* Sidebar */}
+      <div style={styles.sidebar}>
+        <div style={styles.sidebarLogo}>
+          <span>⚡</span>
+          <span style={styles.logoText}>IoT Platform</span>
+        </div>
+        
+        <nav style={styles.sidebarNav}>
+          <div
+            style={{...styles.navItem, background: 'rgba(56, 189, 248, 0.1)', borderLeft: '3px solid #38bdf8'}}
+            onClick={() => navigate('/dashboard')}
+          >
+            📊 Dashboard
+          </div>
+          <div style={styles.navItem} onClick={() => navigate('/settings')}>
+            ⚙️ Settings
+          </div>
+        </nav>
+
+        <div style={styles.sidebarFooter}>
+          <div style={styles.userCard}>
+            <div style={styles.userAvatar}>👤</div>
+            <div style={styles.userInfo}>
+              <div style={styles.userEmail}>{user?.email}</div>
+              <button style={styles.logoutBtnSmall} onClick={() => {
+                logout()
+                navigate('/')
+              }}>
+                Sign out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Navbar */}
       <div style={styles.navbar}>
-        <span style={styles.navLogo}>⚡ IoT Platform</span>
+        <div style={styles.navbarLeft}>
+          <span style={styles.navTitle}>Dashboard</span>
+        </div>
         <div style={styles.navRight}>
-          <span style={styles.navUser}>👤 {user?.email}</span>
           <button 
             style={styles.settingsBtn} 
             onClick={() => setSettingsOpen(true)}
@@ -157,7 +197,7 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div style={styles.grid}>
-            {projects.map((project) => (
+            {(Array.isArray(projects) ? projects : []).map((project) => (
               <div key={project.id} style={styles.projectCard}>
                 <div style={styles.projectHeader}>
                   <span style={styles.projectIcon}>📡</span>
@@ -272,15 +312,102 @@ export default function DashboardPage() {
 }
 
 const styles = {
-  page: { minHeight: '100vh', background: '#0f172a' },
-  navbar: {
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    padding: '1rem 2rem', background: '#1e293b',
-    borderBottom: '1px solid #334155',
+  page: { 
+    minHeight: '100vh', 
+    background: '#0f172a',
+    display: 'flex',
+    flexDirection: 'column',
   },
-  navLogo: { fontSize: '1.25rem', fontWeight: '700', color: '#38bdf8' },
+  sidebar: {
+    width: '220px',
+    background: '#1e293b',
+    borderRight: '1px solid #334155',
+    flexDirection: 'column',
+    padding: '1.5rem 0',
+    position: 'fixed',
+    height: '100vh',
+    left: 0,
+    top: 0,
+    overflowY: 'auto',
+    zIndex: 50,
+  },
+  sidebarLogo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+    padding: '0 1.5rem',
+    marginBottom: '2rem',
+    fontSize: '1.5rem',
+  },
+  logoText: {
+    color: '#38bdf8',
+    fontWeight: '700',
+  },
+  sidebarNav: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.5rem',
+  },
+  navItem: {
+    padding: '0.75rem 1.5rem',
+    color: '#cbd5e1',
+    cursor: 'pointer',
+    transition: 'all 0.3s',
+    userSelect: 'none',
+  },
+  sidebarFooter: {
+    padding: '1.5rem',
+    borderTop: '1px solid #334155',
+  },
+  userCard: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+  },
+  userAvatar: {
+    fontSize: '1.5rem',
+  },
+  userInfo: {
+    flex: 1,
+  },
+  userEmail: {
+    color: '#e2e8f0',
+    fontSize: '0.875rem',
+    fontWeight: '500',
+    marginBottom: '0.5rem',
+    wordBreak: 'break-word',
+  },
+  logoutBtnSmall: {
+    background: 'transparent',
+    border: '1px solid #475569',
+    color: '#94a3b8',
+    borderRadius: '4px',
+    padding: '0.25rem 0.75rem',
+    fontSize: '0.75rem',
+    cursor: 'pointer',
+    width: '100%',
+  },
+  navbar: {
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'space-between',
+    padding: '1rem 2rem', 
+    background: '#1e293b',
+    borderBottom: '1px solid #334155',
+    marginLeft: '220px',
+  },
+  navbarLeft: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1rem',
+  },
+  navTitle: {
+    fontSize: '1.25rem',
+    fontWeight: '600',
+    color: '#f1f5f9',
+  },
   navRight: { display: 'flex', alignItems: 'center', gap: '1rem' },
-  navUser: { color: '#94a3b8', fontSize: '0.875rem' },
   settingsBtn: {
     padding: '0.4rem 0.6rem', background: 'transparent',
     border: '1px solid #475569', borderRadius: '6px',
@@ -291,17 +418,42 @@ const styles = {
     border: '1px solid #475569', borderRadius: '6px',
     color: '#94a3b8', fontSize: '0.875rem',
   },
-  content: { maxWidth: '1100px', margin: '0 auto', padding: '2rem' },
-  header: {
-    display: 'flex', justifyContent: 'space-between',
-    alignItems: 'flex-start', marginBottom: '2rem',
+  content: { 
+    flex: 1,
+    maxWidth: '1200px', 
+    margin: '0 auto', 
+    padding: '2rem',
+    width: '100%',
+    marginLeft: '220px',
   },
-  title: { fontSize: '1.75rem', fontWeight: '700', color: '#f1f5f9' },
-  subtitle: { color: '#94a3b8', marginTop: '0.25rem', fontSize: '0.9rem' },
+  header: {
+    display: 'flex', 
+    justifyContent: 'space-between',
+    alignItems: 'flex-start', 
+    marginBottom: '2rem',
+    gap: '2rem',
+  },
+  title: { 
+    fontSize: '2rem', 
+    fontWeight: '700', 
+    color: '#f1f5f9',
+    margin: 0,
+  },
+  subtitle: { 
+    color: '#94a3b8', 
+    marginTop: '0.5rem', 
+    fontSize: '0.95rem' 
+  },
   createBtn: {
-    padding: '0.65rem 1.25rem', background: '#38bdf8',
-    color: '#0f172a', border: 'none', borderRadius: '8px',
-    fontWeight: '600', fontSize: '0.95rem',
+    padding: '0.75rem 1.5rem', 
+    background: '#38bdf8',
+    color: '#0f172a', 
+    border: 'none', 
+    borderRadius: '8px',
+    fontWeight: '600', 
+    fontSize: '0.95rem',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
   },
   error: {
     background: '#450a0a', color: '#fca5a5', padding: '0.75rem',
@@ -349,8 +501,16 @@ const styles = {
     gap: '1.25rem',
   },
   projectCard: {
-    background: '#1e293b', padding: '1.5rem', borderRadius: '12px',
+    background: '#1e293b', 
+    padding: '1.5rem', 
+    borderRadius: '12px',
     border: '1px solid #334155',
+    transition: 'all 0.3s',
+    cursor: 'pointer',
+    '&:hover': {
+      borderColor: '#38bdf8',
+      boxShadow: '0 0 20px rgba(56, 189, 248, 0.1)',
+    },
   },
   projectHeader: {
     display: 'flex', justifyContent: 'space-between',
@@ -365,17 +525,33 @@ const styles = {
   },
   projectFooter: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
   viewBtn: {
-    padding: '0.5rem 1rem', background: '#0f172a',
-    border: '1px solid #38bdf8', borderRadius: '6px',
-    color: '#38bdf8', fontSize: '0.875rem',
+    padding: '0.5rem 1rem', 
+    background: '#0f172a',
+    border: '1px solid #38bdf8', 
+    borderRadius: '6px',
+    color: '#38bdf8',
+    fontSize: '0.875rem',
   },
   deleteBtn: {
-    padding: '0.5rem', background: 'transparent',
-    border: '1px solid #334155', borderRadius: '6px', fontSize: '1rem',
+    padding: '0.5rem', 
+    background: 'transparent',
+    border: '1px solid #334155', 
+    borderRadius: '6px', 
+    fontSize: '1rem',
   },
-  emptyState: { textAlign: 'center', padding: '4rem 0' },
-  emptyIcon: { fontSize: '3rem', marginBottom: '1rem' },
-  emptyText: { color: '#f1f5f9', fontSize: '1.1rem', fontWeight: '600' },
+  emptyState: { 
+    textAlign: 'center', 
+    padding: '4rem 0' 
+  },
+  emptyIcon: { 
+    fontSize: '3rem', 
+    marginBottom: '1rem' 
+  },
+  emptyText: { 
+    color: '#f1f5f9', 
+    fontSize: '1.1rem', 
+    fontWeight: '600' 
+  },
   drawerBackdrop: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100 },
   drawer: {
     position: 'fixed',
