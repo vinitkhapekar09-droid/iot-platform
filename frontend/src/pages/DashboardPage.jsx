@@ -88,7 +88,10 @@ export default function DashboardPage() {
           >
             ⚙️
           </button>
-          <button style={styles.logoutBtn} onClick={logout}>
+          <button style={styles.logoutBtn} onClick={() => {
+            logout()
+            navigate('/')
+          }}>
             Logout
           </button>
         </div>

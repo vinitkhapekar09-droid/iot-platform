@@ -12,7 +12,7 @@ import SettingsPage from './pages/SettingsPage'
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
   if (loading) return <div style={{padding: '2rem', color: '#94a3b8'}}>Loading...</div>
-  if (!user) return <Navigate to="/login" />
+  if (!user) return <Navigate to="/" />
   return children
 }
 
