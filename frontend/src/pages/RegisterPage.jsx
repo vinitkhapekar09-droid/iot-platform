@@ -27,7 +27,15 @@ export default function RegisterPage() {
       login(res.data.access_token, res.data.user)
       navigate('/dashboard')
     } catch (err) {
-      setError(err.response?.data?.detail || 'Registration failed')
+      // Prefer normalized userMessage from client, then common response shapes
+      const msg =
+        err.userMessage ||
+        err.response?.data?.detail ||
+        (err.response?.data?.errors
+          ? Object.values(err.response.data.errors).flat().join(', ')
+          : null) ||
+        'Registration failed — please try again.'
+      setError(msg)
     } finally {
       setLoading(false)
     }
@@ -35,6 +43,9 @@ export default function RegisterPage() {
 
   return (
     <div style={styles.page}>
+      <div style={styles.header}>
+        <Link to="/" style={styles.backButton}>← Back to Home</Link>
+      </div>
       <div style={styles.card}>
         <div style={styles.logo}>⚡ IoT Platform</div>
         <h2 style={styles.title}>Create account</h2>
@@ -98,6 +109,22 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     background: '#0f172a',
+    flexDirection: 'column',
+  },
+  header: {
+    position: 'absolute',
+    top: '2rem',
+    left: '2rem',
+  },
+  backButton: {
+    color: '#38bdf8',
+    textDecoration: 'none',
+    fontWeight: '500',
+    transition: 'color 0.3s',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    cursor: 'pointer',
   },
   card: {
     background: '#1e293b',
