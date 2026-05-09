@@ -43,6 +43,29 @@ This repository is divided into three main components:
 
 ---
 
+## Demo Mode
+
+The platform includes a built-in demo mode for users to explore all features without creating an account:
+
+### Demo Features
+- **Try Demo Button**: Click "Try Demo" on the login page to access the demo account instantly
+- **Pre-populated Data**: Demo account comes with 7 days of realistic sensor readings from 2 devices
+- **Full Feature Access**: Explore dashboards, charts, alerts, and AI chatbot functionality
+- **Data Retention**: Demo data is automatically cleaned up after 7 days
+- **Limitations**: 
+  - 📧 Email configuration disabled
+  - 🔒 Read-only access to alerts (cannot create/modify/delete)
+  - 💬 Chat limited to 10 messages per day
+  - 📊 Data purged automatically after 7 days
+
+### Getting Started with Demo
+1. Visit the login page
+2. Click the "🎯 Try Demo" button
+3. Explore the dashboard with pre-populated smart home sensor data
+4. Test all features and create a real account when ready
+
+---
+
 ## Getting Started
 
 ### Prerequisites
@@ -122,3 +145,36 @@ FRONTEND_URL=http://localhost:5173
 GROQ_API_KEY=your_groq_api_key
 RESEND_API_KEY=your_resend_api_key
 ```
+
+---
+
+## Demo Mode Maintenance
+
+To keep the demo system running smoothly, periodic maintenance tasks should be scheduled:
+
+### Cleanup Old Demo Data
+Remove demo sensor readings older than 7 days:
+```bash
+cd backend
+python manage.py cleanup
+```
+
+### Reset Daily Chat Limits
+Reset the chat message counter for demo users (should run daily):
+```bash
+cd backend
+python manage.py reset-limits
+```
+
+### Automated Scheduling (Recommended)
+For production deployments, use cron jobs to automate these tasks:
+
+```bash
+# Clean up demo data daily at 2 AM
+0 2 * * * cd /path/to/backend && python manage.py cleanup
+
+# Reset chat limits daily at 12:01 AM
+1 0 * * * cd /path/to/backend && python manage.py reset-limits
+```
+
+---
