@@ -7,6 +7,7 @@ Create Date: 2026-05-09 10:20:00.000000
 """
 from typing import Sequence, Union
 import uuid
+from datetime import datetime
 
 from alembic import op
 import sqlalchemy as sa
@@ -52,6 +53,7 @@ def upgrade() -> None:
             'threshold_value': 30.0,
             'cooldown_minutes': 60,
             'is_active': True,
+            'created_at': datetime.utcnow(),
         },
         {
             'id': str(uuid.uuid4()),
@@ -62,6 +64,7 @@ def upgrade() -> None:
             'threshold_value': 25.0,
             'cooldown_minutes': 60,
             'is_active': True,
+            'created_at': datetime.utcnow(),
         },
         {
             'id': str(uuid.uuid4()),
@@ -72,6 +75,7 @@ def upgrade() -> None:
             'threshold_value': 35.0,
             'cooldown_minutes': 120,
             'is_active': True,
+            'created_at': datetime.utcnow(),
         },
     ]
     
@@ -81,8 +85,8 @@ def upgrade() -> None:
             sa.text(
                 """
                 INSERT INTO alert_rules 
-                (id, project_id, device_id, metric_name, condition, threshold_value, cooldown_minutes, is_active)
-                VALUES (:id, :project_id, :device_id, :metric_name, :condition, :threshold_value, :cooldown_minutes, :is_active)
+                (id, project_id, device_id, metric_name, condition, threshold_value, cooldown_minutes, is_active, created_at)
+                VALUES (:id, :project_id, :device_id, :metric_name, :condition, :threshold_value, :cooldown_minutes, :is_active, :created_at)
                 """
             ),
             alert

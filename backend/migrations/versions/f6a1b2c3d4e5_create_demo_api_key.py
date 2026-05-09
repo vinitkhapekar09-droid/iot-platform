@@ -8,6 +8,7 @@ Create Date: 2026-05-09 10:25:00.000000
 from typing import Sequence, Union
 import uuid
 import hashlib
+from datetime import datetime
 
 from alembic import op
 import sqlalchemy as sa
@@ -52,8 +53,8 @@ def upgrade() -> None:
         sa.text(
             """
             INSERT INTO api_keys 
-            (id, project_id, label, key_hash, is_active)
-            VALUES (:id, :project_id, :label, :key_hash, :is_active)
+            (id, project_id, label, key_hash, key_prefix, is_active, created_at)
+            VALUES (:id, :project_id, :label, :key_hash, :key_prefix, :is_active, :created_at)
             """
         ),
         {
@@ -61,7 +62,9 @@ def upgrade() -> None:
             'project_id': project_id,
             'label': 'Demo API Key',
             'key_hash': key_hash,
+            'key_prefix': 'demo_key',
             'is_active': True,
+            'created_at': datetime.utcnow(),
         }
     )
     

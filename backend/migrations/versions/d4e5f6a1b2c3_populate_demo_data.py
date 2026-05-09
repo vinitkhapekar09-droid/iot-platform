@@ -83,7 +83,7 @@ def upgrade() -> None:
                     'metric_name': metric_name,
                     'metric_value': round(value, 2),
                     'unit': unit,
-                    'timestamp': current_time.isoformat(),
+                    'timestamp': current_time,
                 })
         
         current_time += timedelta(minutes=15)
