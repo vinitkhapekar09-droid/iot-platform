@@ -223,12 +223,12 @@ export default function DashboardPage() {
                     </p>
                     <ul style={styles.demoInfoList}>
                       <li>📊 Data stored for 7 days only</li>
-                      <li>💬 Chat limit: 10 messages per day</li>
+                      <li>💬 Chat limit: 10 messages per session</li>
                       <li>🔒 Read-only mode for alerts</li>
                       <li>❌ No email configuration</li>
                     </ul>
                     <p style={styles.demoCallToAction}>
-                      <strong>Want to keep your data?</strong> Create a real account to save unlimited data and configure alerts.
+                      <strong>Want to keep your data?</strong> Create a real account to save unlimited data.
                     </p>
                   </div>
                 </div>
@@ -306,42 +306,17 @@ export default function DashboardPage() {
 const styles = {
   page: { minHeight: '100vh', background: '#0f172a' },
   navbar: {
-    display: 'flex', 
-    alignItems: 'center', 
-    justifyContent: 'space-between',
-    padding: '0.75rem 1rem', 
-    background: '#1e293b',
+    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+    padding: '1rem 2rem', background: '#1e293b',
     borderBottom: '1px solid #334155',
-    flexWrap: 'wrap',
-    gap: '0.5rem',
   },
-  navLogo: { 
-    fontSize: 'clamp(1rem, 2vw, 1.25rem)', 
-    fontWeight: '700', 
-    color: '#38bdf8' 
-  },
-  navRight: { 
-    display: 'flex', 
-    alignItems: 'center', 
-    gap: '0.5rem',
-    flexWrap: 'wrap',
-  },
-  navUser: { 
-    color: '#94a3b8', 
-    fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    maxWidth: '120px',
-  },
+  navLogo: { fontSize: '1.25rem', fontWeight: '700', color: '#38bdf8' },
+  navRight: { display: 'flex', alignItems: 'center', gap: '1rem' },
+  navUser: { color: '#94a3b8', fontSize: '0.875rem' },
   demoBadge: {
-    background: '#6366f1',
-    color: '#f1f5f9',
-    padding: '0.25rem 0.75rem',
-    borderRadius: '6px',
-    fontSize: '0.75rem',
-    fontWeight: '700',
-    letterSpacing: '0.05em',
+    background: '#6366f1', color: '#f1f5f9', 
+    padding: '0.4rem 0.8rem', borderRadius: '6px',
+    fontSize: '0.75rem', fontWeight: '600',
   },
   settingsBtn: {
     padding: '0.4rem 0.6rem', background: 'transparent',
@@ -353,33 +328,17 @@ const styles = {
     border: '1px solid #475569', borderRadius: '6px',
     color: '#94a3b8', fontSize: '0.875rem',
   },
-  content: { maxWidth: '1100px', margin: '0 auto', padding: 'clamp(1rem, 2vw, 2rem)' },
+  content: { maxWidth: '1100px', margin: '0 auto', padding: '2rem' },
   header: {
-    display: 'flex', 
-    justifyContent: 'space-between',
-    alignItems: 'flex-start', 
-    marginBottom: '2rem',
-    flexWrap: 'wrap',
-    gap: '1rem',
+    display: 'flex', justifyContent: 'space-between',
+    alignItems: 'flex-start', marginBottom: '2rem',
   },
-  title: { 
-    fontSize: 'clamp(1.25rem, 5vw, 1.75rem)', 
-    fontWeight: '700', 
-    color: '#f1f5f9',
-    flex: '1 1 100%',
-    marginBottom: '0.5rem',
-  },
-  subtitle: { color: '#94a3b8', marginTop: '0.25rem', fontSize: 'clamp(0.75rem, 2vw, 0.9rem)' },
+  title: { fontSize: '1.75rem', fontWeight: '700', color: '#f1f5f9' },
+  subtitle: { color: '#94a3b8', marginTop: '0.25rem', fontSize: '0.9rem' },
   createBtn: {
-    padding: '0.65rem 1.25rem', 
-    background: '#38bdf8',
-    color: '#0f172a', 
-    border: 'none', 
-    borderRadius: '8px',
-    fontWeight: '600', 
-    fontSize: 'clamp(0.85rem, 2vw, 0.95rem)',
-    cursor: 'pointer',
-    whiteSpace: 'nowrap',
+    padding: '0.65rem 1.25rem', background: '#38bdf8',
+    color: '#0f172a', border: 'none', borderRadius: '8px',
+    fontWeight: '600', fontSize: '0.95rem',
   },
   error: {
     background: '#450a0a', color: '#fca5a5', padding: '0.75rem',
@@ -423,8 +382,8 @@ const styles = {
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(250px, 90vw, 300px), 1fr))',
-    gap: 'clamp(0.75rem, 2vw, 1.25rem)',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+    gap: '1.25rem',
   },
   projectCard: {
     background: '#1e293b', padding: '1.5rem', borderRadius: '12px',
@@ -460,7 +419,7 @@ const styles = {
     right: 0,
     top: 0,
     bottom: 0,
-    width: 'min(420px, 90vw)',
+    width: '420px',
     background: '#0f172a',
     zIndex: 101,
     borderLeft: '1px solid #334155',
@@ -518,27 +477,34 @@ const styles = {
   },
   demoInfoBox: {
     background: '#1e293b',
-    border: '1px solid #6366f1',
+    border: '1px solid #4f46e5',
     borderRadius: '8px',
     padding: '1rem',
   },
   demoInfoText: {
-    color: '#e2e8f0',
+    color: '#cbd5e1',
     fontSize: '0.9rem',
-    marginBottom: '0.75rem',
+    margin: '0 0 0.75rem 0',
   },
   demoInfoList: {
     color: '#cbd5e1',
-    fontSize: '0.85rem',
-    listStyleType: 'none',
-    padding: '0',
-    margin: '0.75rem 0',
+    fontSize: '0.9rem',
+    margin: '0.5rem 0 0.75rem 1.5rem',
+    paddingLeft: 0,
   },
   demoCallToAction: {
-    color: '#94a3b8',
-    fontSize: '0.8rem',
-    marginTop: '1rem',
-    fontStyle: 'italic',
+    color: '#6366f1',
+    fontSize: '0.9rem',
+    margin: '0.75rem 0 0 0',
+  },
+  alertInfo: {
+    background: '#1e293b',
+    border: '1px solid #6366f1',
+    color: '#cbd5e1',
+    padding: '0.75rem',
+    borderRadius: '6px',
+    fontSize: '0.9rem',
+    marginBottom: '1rem',
   },
   settingItem: {
     marginBottom: '1.25rem',
@@ -588,15 +554,6 @@ const styles = {
     background: '#450a0a',
     color: '#fca5a5',
     border: '1px solid #dc2626',
-    padding: '0.75rem',
-    borderRadius: '6px',
-    marginTop: '0.75rem',
-    fontSize: '0.85rem',
-  },
-  alertInfo: {
-    background: '#1e293b',
-    color: '#38bdf8',
-    border: '1px solid #0369a1',
     padding: '0.75rem',
     borderRadius: '6px',
     marginTop: '0.75rem',
