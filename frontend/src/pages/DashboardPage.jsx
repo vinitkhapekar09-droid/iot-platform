@@ -81,6 +81,9 @@ export default function DashboardPage() {
         <span style={styles.navLogo}>⚡ IoT Platform</span>
         <div style={styles.navRight}>
           <span style={styles.navUser}>👤 {user?.email}</span>
+          {user?.is_demo && (
+            <span style={styles.demoBadge}>🎯 DEMO</span>
+          )}
           <button 
             style={styles.settingsBtn} 
             onClick={() => setSettingsOpen(true)}
@@ -207,6 +210,27 @@ export default function DashboardPage() {
 
             {/* Scrollable Content */}
             <div style={styles.drawerContent}>
+              {/* Demo Mode Info Section */}
+              {user?.is_demo && (
+                <div style={styles.demoInfoSection}>
+                  <h3 style={styles.sectionTitle}>🎯 Demo Mode</h3>
+                  <div style={styles.demoInfoBox}>
+                    <p style={styles.demoInfoText}>
+                      You're using the demo account to explore IoT Platform features.
+                    </p>
+                    <ul style={styles.demoInfoList}>
+                      <li>📊 Data stored for 7 days only</li>
+                      <li>💬 Chat limit: 10 messages per day</li>
+                      <li>🔒 Read-only mode for alerts</li>
+                      <li>❌ No email configuration</li>
+                    </ul>
+                    <p style={styles.demoCallToAction}>
+                      <strong>Want to keep your data?</strong> Create a real account to save unlimited data and configure alerts.
+                    </p>
+                  </div>
+                </div>
+              )}
+              
               {/* Notifications Section */}
               <div style={styles.section}>
                 <h3 style={styles.sectionTitle}>📧 Notifications</h3>
@@ -214,19 +238,25 @@ export default function DashboardPage() {
                   Configure how you receive alerts from your IoT devices
                 </p>
                 
-                <div style={styles.settingItem}>
-                  <label style={styles.settingLabel}>Alert Email Address</label>
-                  <p style={styles.settingHint}>
-                    Where alerts will be sent (leave empty to use {user?.email})
-                  </p>
-                  <input
-                    style={styles.drawerInput}
-                    type="email"
-                    placeholder="alerts@example.com"
-                    value={settingsEmail}
-                    onChange={(e) => setSettingsEmail(e.target.value)}
-                  />
-                </div>
+                {user?.is_demo ? (
+                  <div style={styles.alertInfo}>
+                    Email configuration is not available in demo mode. Create a real account to enable alerts.
+                  </div>
+                ) : (
+                  <div style={styles.settingItem}>
+                    <label style={styles.settingLabel}>Alert Email Address</label>
+                    <p style={styles.settingHint}>
+                      Where alerts will be sent (leave empty to use {user?.email})
+                    </p>
+                    <input
+                      style={styles.drawerInput}
+                      type="email"
+                      placeholder="alerts@example.com"
+                      value={settingsEmail}
+                      onChange={(e) => setSettingsEmail(e.target.value)}
+                    />
+                  </div>
+                )}
 
                 {settingsMessage && (
                   <div style={styles.alertSuccess}>{settingsMessage}</div>
@@ -236,9 +266,11 @@ export default function DashboardPage() {
                 )}
 
                 <div style={styles.actionButtons}>
-                  <button style={styles.submitBtn} onClick={saveSettings}>
-                    Save Changes
-                  </button>
+                  {!user?.is_demo && (
+                    <button style={styles.submitBtn} onClick={saveSettings}>
+                      Save Changes
+                    </button>
+                  )}
                   <button style={styles.cancelBtn} onClick={() => setSettingsOpen(false)}>
                     Close
                   </button>
@@ -278,6 +310,15 @@ const styles = {
   navLogo: { fontSize: '1.25rem', fontWeight: '700', color: '#38bdf8' },
   navRight: { display: 'flex', alignItems: 'center', gap: '1rem' },
   navUser: { color: '#94a3b8', fontSize: '0.875rem' },
+  demoBadge: {
+    background: '#6366f1',
+    color: '#f1f5f9',
+    padding: '0.25rem 0.75rem',
+    borderRadius: '6px',
+    fontSize: '0.75rem',
+    fontWeight: '700',
+    letterSpacing: '0.05em',
+  },
   settingsBtn: {
     padding: '0.4rem 0.6rem', background: 'transparent',
     border: '1px solid #475569', borderRadius: '6px',
@@ -432,6 +473,33 @@ const styles = {
     fontSize: '0.85rem',
     marginBottom: '1rem',
   },
+  demoInfoSection: {
+    marginBottom: '1.5rem',
+  },
+  demoInfoBox: {
+    background: '#1e293b',
+    border: '1px solid #6366f1',
+    borderRadius: '8px',
+    padding: '1rem',
+  },
+  demoInfoText: {
+    color: '#e2e8f0',
+    fontSize: '0.9rem',
+    marginBottom: '0.75rem',
+  },
+  demoInfoList: {
+    color: '#cbd5e1',
+    fontSize: '0.85rem',
+    listStyleType: 'none',
+    padding: '0',
+    margin: '0.75rem 0',
+  },
+  demoCallToAction: {
+    color: '#94a3b8',
+    fontSize: '0.8rem',
+    marginTop: '1rem',
+    fontStyle: 'italic',
+  },
   settingItem: {
     marginBottom: '1.25rem',
   },
@@ -480,6 +548,15 @@ const styles = {
     background: '#450a0a',
     color: '#fca5a5',
     border: '1px solid #dc2626',
+    padding: '0.75rem',
+    borderRadius: '6px',
+    marginTop: '0.75rem',
+    fontSize: '0.85rem',
+  },
+  alertInfo: {
+    background: '#1e293b',
+    color: '#38bdf8',
+    border: '1px solid #0369a1',
     padding: '0.75rem',
     borderRadius: '6px',
     marginTop: '0.75rem',
