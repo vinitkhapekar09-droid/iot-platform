@@ -4,7 +4,7 @@ from pydantic import BaseModel, EmailStr, ValidationError
 from app.database import get_db
 from app.schemas.user import UserRegister, UserLogin, UserOut, TokenOut
 from app.services.auth_service import register_user, login_user
-from app.utils.dependencies import get_current_user
+from app.utils.dependencies import get_current_user, is_demo_user
 from app.models.user import User
 import re
 
@@ -45,6 +45,12 @@ async def update_alert_email(
     db: AsyncSession = Depends(get_db),
 ):
     """Update user's preferred alert email address."""
+    if is_demo_user(current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot update alert email in demo mode. Please sign up for an account.",
+        )
+    
     if request.alert_email is not None and request.alert_email.strip() == "":
         request.alert_email = None
 

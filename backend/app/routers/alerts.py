@@ -1,13 +1,13 @@
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc, func
 from app.database import get_db
 from app.config import settings
 from app.models.user import User
 from app.models.alert import AlertRule, AlertHistory
-from app.utils.dependencies import get_current_user
+from app.utils.dependencies import get_current_user, is_demo_user
 from app.schemas.alert import AlertRuleCreate, AlertRuleOut, AlertHistoryOut
 from app.routers.data import verify_project_owner
 from app.services.anomaly_service import (
@@ -28,6 +28,12 @@ async def create_alert_rule(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    if is_demo_user(current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot create alert rules in demo mode. Please sign up for an account.",
+        )
+    
     await verify_project_owner(project_id, current_user, db)
 
     rule = AlertRule(
@@ -66,6 +72,12 @@ async def delete_alert_rule(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    if is_demo_user(current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot delete alert rules in demo mode. Please sign up for an account.",
+        )
+    
     await verify_project_owner(project_id, current_user, db)
 
     result = await db.execute(
@@ -86,6 +98,12 @@ async def toggle_alert_rule(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    if is_demo_user(current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot toggle alert rules in demo mode. Please sign up for an account.",
+        )
+    
     await verify_project_owner(project_id, current_user, db)
 
     result = await db.execute(
@@ -143,6 +161,12 @@ async def train_model(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    if is_demo_user(current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot train models in demo mode. Please sign up for an account.",
+        )
+    
     """Train Isolation Forest model for a device+metric."""
     await verify_project_owner(project_id, current_user, db)
 
