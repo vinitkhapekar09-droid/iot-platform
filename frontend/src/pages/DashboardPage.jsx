@@ -24,9 +24,12 @@ export default function DashboardPage() {
   const fetchProjects = async () => {
     try {
       const res = await getProjects()
-      setProjects(res.data)
-    } catch {
+      const projectsData = Array.isArray(res.data) ? res.data : []
+      setProjects(projectsData)
+    } catch (err) {
+      console.error('Failed to load projects:', err)
       setError('Failed to load projects')
+      setProjects([])
     } finally {
       setLoading(false)
     }

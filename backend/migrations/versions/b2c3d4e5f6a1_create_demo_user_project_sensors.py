@@ -24,7 +24,7 @@ def upgrade() -> None:
     # Create demo user
     demo_user_id = "demo-user-" + str(uuid.uuid4())
     demo_email = "demo@iotplatform.local"
-    demo_password_hash = "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5YmMxSUJlUyvO"  # hash of "demo"
+    demo_password_hash = "$2b$12$gCT8lUk4WgB9xxi53WNDdOkFSsgMlIadmK1OGMYzwmy.CHRkUAjLO"  # hash of "demo"
     
     op.execute(
         sa.text(
