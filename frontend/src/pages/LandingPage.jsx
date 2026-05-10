@@ -1,8 +1,25 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { login as loginApi } from '../api/auth'
 
 export default function LandingPage() {
-  const { user } = useAuth()
+  const { user, login } = useAuth()
+  const navigate = useNavigate()
+  const [demoLoading, setDemoLoading] = useState(false)
+
+  const handleDemoLogin = async () => {
+    setDemoLoading(true)
+    try {
+      const res = await loginApi({ email: 'demo@iotplatform.local', password: 'demo' })
+      login(res.data.access_token, res.data.user)
+      navigate('/dashboard')
+    } catch (err) {
+      console.error('Demo login failed:', err)
+    } finally {
+      setDemoLoading(false)
+    }
+  }
 
   return (
     <div style={styles.container}>
@@ -39,6 +56,13 @@ export default function LandingPage() {
             <Link to="/register" style={{ ...styles.ctaButton, background: '#38bdf8', color: '#0f172a' }}>
               Start Free Trial
             </Link>
+            <button 
+              onClick={handleDemoLogin}
+              style={{ ...styles.ctaButton, background: '#6366f1', color: '#f1f5f9', border: 'none', cursor: 'pointer' }}
+              disabled={demoLoading}
+            >
+              {demoLoading ? '🔄 Loading...' : '🎯 Try Demo'}
+            </button>
             <a href="#features" style={{ ...styles.ctaButton, background: 'transparent', border: '2px solid #38bdf8' }}>
               Learn More
             </a>

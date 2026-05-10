@@ -9,6 +9,11 @@ from app.utils.security import decode_access_token
 bearer_scheme = HTTPBearer()
 
 
+def is_demo_user(user: User) -> bool:
+    """Check if the user is a demo user."""
+    return user.is_demo
+
+
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
     db: AsyncSession = Depends(get_db),

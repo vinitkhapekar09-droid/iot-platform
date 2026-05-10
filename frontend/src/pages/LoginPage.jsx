@@ -33,6 +33,20 @@ export default function LoginPage() {
     }
   }
 
+  const handleDemoLogin = async () => {
+    setError('')
+    setLoading(true)
+    try {
+      const res = await loginApi({ email: 'demo@iotplatform.local', password: 'demo' })
+      login(res.data.access_token, res.data.user)
+      navigate('/dashboard')
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Demo login failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div style={styles.page}>
       <div style={styles.header}>
@@ -168,6 +182,34 @@ const styles = {
     fontWeight: '600',
     fontSize: '1rem',
     marginTop: '0.5rem',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
+  },
+  divider: {
+    display: 'flex',
+    alignItems: 'center',
+    margin: '1.5rem 0',
+    color: '#64748b',
+    fontSize: '0.85rem',
+    fontWeight: '500',
+  },
+  divider_line: {
+    flex: 1,
+    height: '1px',
+    background: '#334155',
+    margin: '0 0.5rem',
+  },
+  demoButton: {
+    width: '100%',
+    padding: '0.75rem',
+    background: '#6366f1',
+    color: '#f1f5f9',
+    border: 'none',
+    borderRadius: '8px',
+    fontWeight: '600',
+    fontSize: '1rem',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
   },
   footer: {
     textAlign: 'center',

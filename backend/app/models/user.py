@@ -20,6 +20,7 @@ class User(Base):
     full_name: Mapped[str] = mapped_column(String, nullable=True)
     alert_email: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    is_demo: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     projects: Mapped[list["Project"]] = relationship(

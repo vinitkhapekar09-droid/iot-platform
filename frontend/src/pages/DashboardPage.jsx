@@ -103,7 +103,12 @@ export default function DashboardPage() {
           <div style={styles.userCard}>
             <div style={styles.userAvatar}>👤</div>
             <div style={styles.userInfo}>
-              <div style={styles.userEmail}>{user?.email}</div>
+              <div style={styles.userEmailContainer}>
+                <div style={styles.userEmail}>{user?.email}</div>
+                {user?.is_demo && (
+                  <span style={styles.demoBadgeSmall}>DEMO</span>
+                )}
+              </div>
               <button style={styles.logoutBtnSmall} onClick={() => {
                 logout()
                 navigate('/')
@@ -235,6 +240,27 @@ export default function DashboardPage() {
 
             {/* Scrollable Content */}
             <div style={styles.drawerContent}>
+              {/* Demo Mode Info Section */}
+              {user?.is_demo && (
+                <div style={styles.demoInfoSection}>
+                  <h3 style={styles.sectionTitle}>🎯 Demo Mode</h3>
+                  <div style={styles.demoInfoBox}>
+                    <p style={styles.demoInfoText}>
+                      You're using the demo account to explore IoT Platform features.
+                    </p>
+                    <ul style={styles.demoInfoList}>
+                      <li>📊 Data stored for 7 days only</li>
+                      <li>💬 Chat limit: 10 messages per session</li>
+                      <li>🔒 Read-only mode for alerts</li>
+                      <li>❌ No email configuration</li>
+                    </ul>
+                    <p style={styles.demoCallToAction}>
+                      <strong>Want to keep your data?</strong> Create a real account to save unlimited data.
+                    </p>
+                  </div>
+                </div>
+              )}
+              
               {/* Notifications Section */}
               <div style={styles.section}>
                 <h3 style={styles.sectionTitle}>📧 Notifications</h3>
@@ -242,19 +268,25 @@ export default function DashboardPage() {
                   Configure how you receive alerts from your IoT devices
                 </p>
                 
-                <div style={styles.settingItem}>
-                  <label style={styles.settingLabel}>Alert Email Address</label>
-                  <p style={styles.settingHint}>
-                    Where alerts will be sent (leave empty to use {user?.email})
-                  </p>
-                  <input
-                    style={styles.drawerInput}
-                    type="email"
-                    placeholder="alerts@example.com"
-                    value={settingsEmail}
-                    onChange={(e) => setSettingsEmail(e.target.value)}
-                  />
-                </div>
+                {user?.is_demo ? (
+                  <div style={styles.alertInfo}>
+                    Email configuration is not available in demo mode. Create a real account to enable alerts.
+                  </div>
+                ) : (
+                  <div style={styles.settingItem}>
+                    <label style={styles.settingLabel}>Alert Email Address</label>
+                    <p style={styles.settingHint}>
+                      Where alerts will be sent (leave empty to use {user?.email})
+                    </p>
+                    <input
+                      style={styles.drawerInput}
+                      type="email"
+                      placeholder="alerts@example.com"
+                      value={settingsEmail}
+                      onChange={(e) => setSettingsEmail(e.target.value)}
+                    />
+                  </div>
+                )}
 
                 {settingsMessage && (
                   <div style={styles.alertSuccess}>{settingsMessage}</div>
@@ -264,9 +296,11 @@ export default function DashboardPage() {
                 )}
 
                 <div style={styles.actionButtons}>
-                  <button style={styles.submitBtn} onClick={saveSettings}>
-                    Save Changes
-                  </button>
+                  {!user?.is_demo && (
+                    <button style={styles.submitBtn} onClick={saveSettings}>
+                      Save Changes
+                    </button>
+                  )}
                   <button style={styles.cancelBtn} onClick={() => setSettingsOpen(false)}>
                     Close
                   </button>
@@ -356,12 +390,26 @@ const styles = {
   userInfo: {
     flex: 1,
   },
+  userEmailContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    marginBottom: '0.5rem',
+  },
   userEmail: {
     color: '#e2e8f0',
     fontSize: '0.875rem',
     fontWeight: '500',
-    marginBottom: '0.5rem',
     wordBreak: 'break-word',
+  },
+  demoBadgeSmall: {
+    background: '#6366f1',
+    color: '#f1f5f9',
+    padding: '0.2rem 0.5rem',
+    borderRadius: '3px',
+    fontSize: '0.7rem',
+    fontWeight: '600',
+    whiteSpace: 'nowrap',
   },
   logoutBtnSmall: {
     background: 'transparent',
@@ -594,6 +642,43 @@ const styles = {
   sectionDesc: {
     color: '#94a3b8',
     fontSize: '0.85rem',
+    marginBottom: '1rem',
+  },
+  demoInfoSection: {
+    marginBottom: '1.5rem',
+    padding: '1rem',
+    background: '#334155',
+    borderRadius: '8px',
+    border: '1px solid #475569',
+  },
+  demoInfoBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.75rem',
+  },
+  demoInfoText: {
+    color: '#cbd5e1',
+    fontSize: '0.875rem',
+    margin: 0,
+  },
+  demoInfoList: {
+    color: '#cbd5e1',
+    fontSize: '0.875rem',
+    margin: '0.5rem 0',
+    paddingLeft: '1.25rem',
+  },
+  demoCallToAction: {
+    color: '#38bdf8',
+    fontSize: '0.875rem',
+    margin: '0.5rem 0 0 0',
+  },
+  alertInfo: {
+    padding: '0.75rem 1rem',
+    background: '#475569',
+    border: '1px solid #64748b',
+    borderRadius: '6px',
+    color: '#cbd5e1',
+    fontSize: '0.875rem',
     marginBottom: '1rem',
   },
   settingItem: {
