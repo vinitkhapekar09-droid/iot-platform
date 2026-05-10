@@ -4,6 +4,7 @@ from app.models.api_key import APIKey
 from app.models.sensor import SensorReading
 from app.models.alert import AlertRule, AlertHistory
 from app.models.anomaly import AnomalyEvent
+from app.models.chat import ChatMessage, ChatMessageCount
 
 
 __all__ = [
@@ -14,4 +15,6 @@ __all__ = [
     "AlertRule",
     "AlertHistory",
     "AnomalyEvent",
+    "ChatMessage",
+    "ChatMessageCount",
 ]
