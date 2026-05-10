@@ -87,20 +87,6 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div style={styles.divider}>
-          <div style={styles.divider_line}></div>
-          <span>OR</span>
-          <div style={styles.divider_line}></div>
-        </div>
-
-        <button 
-          style={styles.demoButton} 
-          onClick={handleDemoLogin}
-          disabled={loading}
-        >
-          🎯 Try Demo
-        </button>
-
         <p style={styles.footer}>
           Don't have an account?{' '}
           <Link to="/register" style={styles.link}>Register</Link>

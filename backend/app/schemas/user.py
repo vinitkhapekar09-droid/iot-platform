@@ -1,6 +1,7 @@
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, field_validator
 from datetime import datetime
 from typing import Optional
+import re
 
 
 class UserRegister(BaseModel):
@@ -15,15 +16,17 @@ class UserRegister(BaseModel):
         if '@' not in v:
             raise ValueError('Invalid email address')
         local, domain = v.rsplit('@', 1)
-        if not local or not domain or '.' not in domain.replace('local', ''):
-            # Allow .local domains or standard email formats
-            if domain.endswith('.local') or domain.endswith('localhost'):
-                return v
-            # For other domains, use standard email validation
-            try:
-                EmailStr.validate(v)
-            except ValueError:
-                raise ValueError('Invalid email address')
+        if not local or not domain:
+            raise ValueError('Invalid email address')
+        
+        # Allow .local and localhost domains for development
+        if domain.endswith('.local') or domain.endswith('localhost'):
+            return v
+        
+        # For other domains, use basic email regex validation
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if not re.match(email_pattern, v):
+            raise ValueError('Invalid email address')
         return v
 
 
@@ -40,13 +43,14 @@ class UserLogin(BaseModel):
         local, domain = v.rsplit('@', 1)
         if not local or not domain:
             raise ValueError('Invalid email address')
-        # Allow .local domains for development
+        
+        # Allow .local and localhost domains for development
         if domain.endswith('.local') or domain.endswith('localhost'):
             return v
-        # For other domains, use standard email validation
-        try:
-            EmailStr.validate(v)
-        except ValueError:
+        
+        # For other domains, use basic email regex validation
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if not re.match(email_pattern, v):
             raise ValueError('Invalid email address')
         return v
 
